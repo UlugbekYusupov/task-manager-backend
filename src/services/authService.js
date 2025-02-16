@@ -3,20 +3,19 @@ const jwt = require("jsonwebtoken");
 const prisma = require("../utils/prismaClient");
 
 exports.register = async (username, email, password) => {
-  const existingUser = await prisma.user.findUnique({ where: { email } });
+  const [existingUser, existingUsername] = await Promise.all([
+    prisma.user.findUnique({ where: { email } }),
+    prisma.user.findUnique({ where: { username } }),
+  ]);
+
   if (existingUser) {
     throw new Error("Email already in use");
   }
 
-  const existingUsername = await prisma.user.findUnique({
-    where: { username },
-  });
   if (existingUsername) {
     throw new Error("Username already taken");
   }
-
   const hashedPassword = await bcrypt.hash(password, 10);
-
   const user = await prisma.user.create({
     data: { username, email, password: hashedPassword },
   });

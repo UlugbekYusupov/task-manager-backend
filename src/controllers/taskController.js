@@ -2,46 +2,51 @@ const TaskService = require("../services/taskService");
 
 exports.createTask = async (req, res) => {
   try {
-    const task = await TaskService.createTask(req.body);
+    const task = await TaskService.createTask(req.params.projectId, req.body);
     res.status(201).json(task);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
-exports.getAllTasks = async (req, res) => {
+exports.getProjectTasks = async (req, res) => {
   try {
-    const tasks = await TaskService.getAllTasks();
+    const tasks = await TaskService.getTasksByProject(req.params.projectId);
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-exports.getTaskById = async (req, res) => {
+exports.updateTaskStatus = async (req, res) => {
   try {
-    const task = await TaskService.getTaskById(req.params.id);
-    if (!task) return res.status(404).json({ message: "Task not found" });
-    res.status(200).json(task);
+    const updatedTask = await TaskService.updateTaskStatus(
+      req.params.taskId,
+      req.body.status
+    );
+    res.status(200).json(updatedTask);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
-exports.updateTask = async (req, res) => {
+exports.assignTask = async (req, res) => {
   try {
-    const updatedTask = await TaskService.updateTask(req.params.id, req.body);
+    const updatedTask = await TaskService.assignTask(
+      req.params.taskId,
+      req.body.userId
+    );
     res.status(200).json(updatedTask);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.deleteTask = async (req, res) => {
   try {
-    await TaskService.deleteTask(req.params.id);
-    res.status(204).send();
+    await TaskService.deleteTask(req.params.taskId);
+    res.status(204).end();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };

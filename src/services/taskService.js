@@ -1,21 +1,32 @@
 const prisma = require("../utils/prismaClient");
 
-exports.createTask = async (data) => {
-  return await prisma.task.create({ data });
+exports.createTask = async (projectId, taskData) => {
+  return await prisma.task.create({
+    data: {
+      ...taskData,
+      projectId,
+    },
+  });
 };
 
-exports.getAllTasks = async () => {
-  return await prisma.task.findMany();
+exports.getTasksByProject = async (projectId) => {
+  return await prisma.task.findMany({ where: { projectId } });
 };
 
-exports.getTaskById = async (id) => {
-  return await prisma.task.findUnique({ where: { id } });
+exports.updateTaskStatus = async (taskId, status) => {
+  return await prisma.task.update({
+    where: { id: taskId },
+    data: { status },
+  });
 };
 
-exports.updateTask = async (id, data) => {
-  return await prisma.task.update({ where: { id }, data });
+exports.assignTask = async (taskId, userId) => {
+  return await prisma.task.update({
+    where: { id: taskId },
+    data: { assignedTo: { connect: { id: userId } } },
+  });
 };
 
-exports.deleteTask = async (id) => {
-  return await prisma.task.delete({ where: { id } });
+exports.deleteTask = async (taskId) => {
+  return await prisma.task.delete({ where: { id: taskId } });
 };
