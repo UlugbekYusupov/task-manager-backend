@@ -11,6 +11,15 @@ router.get("/:projectId", authenticateUser, projectController.getProject);
 router.get("/", authenticateUser, projectController.getProjects);
 router.post("/:id/members", authenticateUser, projectController.addMember);
 
-router.post("/:projectId/tasks", authenticateUser, projectController.createTask);
+router.post(
+  "/:projectId/tasks",
+  authenticateUser,
+  projectController.createTask
+);
+router.get(
+  "/:projectId/tasks",
+  authenticateUser,
+  projectController.getAllTasksForProject
+);
 
 module.exports = router;

@@ -64,3 +64,19 @@ exports.createTask = async (projectId, title, description) => {
 
   return task;
 };
+
+exports.getAllTasksForProject = async (projectId) => {
+  try {
+    const tasks = await prisma.task.findMany({
+      where: {
+        projectId: projectId,
+      },
+      include: {
+        assignedTo: true,
+      },
+    });
+    return tasks;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};

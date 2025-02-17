@@ -14,15 +14,15 @@ generator client {
 }
 
 model User {
-  id            String    @id @default(uuid())
-  username      String    @unique
-  email         String    @unique
+  id            String       @id @default(uuid())
+  username      String       @unique
+  email         String       @unique
   password      String
-  role          String    @default("user")
+  role          String       @default("user")
   tasks         Task[]
   invitations   Invitation[]
-  projects      Project[] @relation("UserProjects")
-  ownedProjects Project[] @relation(name: "ProjectOwner")
+  projects      Project[]    @relation("UserProjects")
+  ownedProjects Project[]    @relation(name: "ProjectOwner")
 }
 
 model Task {
@@ -40,23 +40,31 @@ model Task {
 }
 
 model Project {
-  id        String   @id @default(uuid())
-  name      String
-  ownerId   String
-  owner     User     @relation(fields: [ownerId], references: [id], name: "ProjectOwner")
-  members   User[]   @relation("UserProjects")
-  tasks     Task[]
+  id          String        @id @default(uuid())
+  name        String
+  ownerId     String
+  owner       User          @relation(fields: [ownerId], references: [id], name: "ProjectOwner")
+  members     User[]        @relation("UserProjects")
+  tasks       Task[]
   invitations Invitation[]
-  createdAt DateTime @default(now())
+  createdAt   DateTime      @default(now())
+  status      ProjectStatus @default(ACTIVE) // New field
 }
 
 model Invitation {
-  id         String  @id @default(uuid())
-  email      String
-  projectId  String
-  project    Project @relation(fields: [projectId], references: [id])
-  status     InvitationStatus @default(PENDING)
-  createdAt  DateTime @default(now())
+  id        String           @id @default(uuid())
+  email     String
+  projectId String
+  project   Project          @relation(fields: [projectId], references: [id])
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  User      User?            @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+enum ProjectStatus {
+  ACTIVE
+  COMPLETED
 }
 
 enum InvitationStatus {
