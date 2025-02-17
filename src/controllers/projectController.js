@@ -12,9 +12,12 @@ exports.createProject = async (req, res) => {
   }
 };
 
-exports.getAllProjects = async (req, res) => {
+exports.getProjects = async (req, res) => {
   try {
-    const projects = await ProjectService.getAllProjects();
+    const userId = req.user.id;
+    console.log("Fetching projects for user:", userId);
+
+    const projects = await ProjectService.getUserProjects(userId);
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ message: error.message });

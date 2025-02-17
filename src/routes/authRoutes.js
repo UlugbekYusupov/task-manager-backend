@@ -10,3 +10,4 @@ router.get("/profile", authMiddleware.authenticateUser, authController.getProfil
 router.get("/users", authMiddleware.authenticateUser, authController.getAllUsers);
 
 module.exports = router;
+

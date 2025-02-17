@@ -20,6 +20,7 @@ model User {
   password      String
   role          String    @default("user")
   tasks         Task[]
+  invitations   Invitation[]
   projects      Project[] @relation("UserProjects")
   ownedProjects Project[] @relation(name: "ProjectOwner")
 }
@@ -45,7 +46,23 @@ model Project {
   owner     User     @relation(fields: [ownerId], references: [id], name: "ProjectOwner")
   members   User[]   @relation("UserProjects")
   tasks     Task[]
+  invitations Invitation[]
   createdAt DateTime @default(now())
+}
+
+model Invitation {
+  id         String  @id @default(uuid())
+  email      String
+  projectId  String
+  project    Project @relation(fields: [projectId], references: [id])
+  status     InvitationStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
 }
 
 enum TaskType {

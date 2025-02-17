@@ -10,8 +10,20 @@ exports.createProject = async (userId, name) => {
   });
 };
 
-exports.getAllProjects = async () => {
+// exports.getUserProjects = async (userId) => {
+//   return await prisma.project.findMany({
+//     where: {
+//       OR: [{ ownerId: userId }, { members: { some: { id: userId } } }],
+//     },
+//     include: { owner: true, members: true, tasks: true },
+//   });
+// };
+
+exports.getUserProjects = async (userId) => {
   return await prisma.project.findMany({
+    where: {
+      members: { some: { id: userId } }, // Ensures the user is a member
+    },
     include: { owner: true, members: true, tasks: true },
   });
 };

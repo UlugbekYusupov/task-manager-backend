@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../utils/prismaClient");
 
+
 exports.register = async (username, email, password) => {
   const [existingUser, existingUsername] = await Promise.all([
     prisma.user.findUnique({ where: { email } }),
