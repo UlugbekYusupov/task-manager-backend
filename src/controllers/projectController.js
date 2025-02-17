@@ -50,3 +50,20 @@ exports.addMember = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+exports.createTask = async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    const projectId = req.params.projectId;
+
+    const task = await ProjectService.createTask(projectId, title, description);
+
+    
+    res.status(201).json({
+      message: "Task created successfully",
+      task,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

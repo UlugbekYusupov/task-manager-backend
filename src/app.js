@@ -12,7 +12,7 @@ app.use(cors());
 
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
-app.use("/api/tasks", taskRoutes);
+// app.use("/api/tasks", taskRoutes);
 app.use("/api/auth", authRoutes);
 
 module.exports = app;

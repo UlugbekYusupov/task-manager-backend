@@ -1,32 +1,25 @@
 const prisma = require("../utils/prismaClient");
 
-exports.createTask = async (projectId, taskData) => {
-  return await prisma.task.create({
-    data: {
-      ...taskData,
-      projectId,
-    },
-  });
-};
 
-exports.getTasksByProject = async (projectId) => {
-  return await prisma.task.findMany({ where: { projectId } });
-};
 
-exports.updateTaskStatus = async (taskId, status) => {
-  return await prisma.task.update({
-    where: { id: taskId },
-    data: { status },
-  });
-};
+// exports.getTasksByProject = async (projectId) => {
+//   return await prisma.task.findMany({ where: { projectId } });
+// };
 
-exports.assignTask = async (taskId, userId) => {
-  return await prisma.task.update({
-    where: { id: taskId },
-    data: { assignedTo: { connect: { id: userId } } },
-  });
-};
+// exports.updateTaskStatus = async (taskId, status) => {
+//   return await prisma.task.update({
+//     where: { id: taskId },
+//     data: { status },
+//   });
+// };
 
-exports.deleteTask = async (taskId) => {
-  return await prisma.task.delete({ where: { id: taskId } });
-};
+// exports.assignTask = async (taskId, userId) => {
+//   return await prisma.task.update({
+//     where: { id: taskId },
+//     data: { assignedTo: { connect: { id: userId } } },
+//   });
+// };
+
+// exports.deleteTask = async (taskId) => {
+//   return await prisma.task.delete({ where: { id: taskId } });
+// };

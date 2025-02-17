@@ -10,19 +10,10 @@ exports.createProject = async (userId, name) => {
   });
 };
 
-// exports.getUserProjects = async (userId) => {
-//   return await prisma.project.findMany({
-//     where: {
-//       OR: [{ ownerId: userId }, { members: { some: { id: userId } } }],
-//     },
-//     include: { owner: true, members: true, tasks: true },
-//   });
-// };
-
 exports.getUserProjects = async (userId) => {
   return await prisma.project.findMany({
     where: {
-      members: { some: { id: userId } }, // Ensures the user is a member
+      members: { some: { id: userId } },
     },
     include: { owner: true, members: true, tasks: true },
   });
@@ -46,4 +37,30 @@ exports.addMemberToProject = async (projectId, userId) => {
     where: { id: projectId },
     data: { members: { connect: { id: userId } } },
   });
+};
+
+exports.createTask = async (projectId, title, description) => {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+  });
+  if (!project) throw new Error("Project not found");
+
+  const task = await prisma.task.create({
+    data: {
+      title,
+      description,
+      projectId,
+    },
+  });
+
+  await prisma.project.update({
+    where: { id: projectId },
+    data: {
+      tasks: {
+        connect: { id: task.id },
+      },
+    },
+  });
+
+  return task;
 };

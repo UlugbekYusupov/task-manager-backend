@@ -11,4 +11,6 @@ router.get("/:projectId", authenticateUser, projectController.getProject);
 router.get("/", authenticateUser, projectController.getProjects);
 router.post("/:id/members", authenticateUser, projectController.addMember);
 
+router.post("/:projectId/tasks", authenticateUser, projectController.createTask);
+
 module.exports = router;
