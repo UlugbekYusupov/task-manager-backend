@@ -22,4 +22,7 @@ router.get(
   projectController.getAllTasksForProject
 );
 
+router.put("/:projectId", authenticateUser, projectController.updateProject);
+router.delete("/:projectId", authenticateUser, projectController.deleteProject);
+
 module.exports = router;

@@ -80,3 +80,45 @@ exports.getAllTasksForProject = async (projectId) => {
     throw new Error(error.message);
   }
 };
+
+exports.updateProject = async (projectId, data) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    const updatedProject = await prisma.project.update({
+      where: { id: projectId },
+      data,
+    });
+
+    return updatedProject;
+  } catch (error) {
+    console.error("Prisma update error:", error);
+    throw new Error("Error updating project");
+  }
+};
+
+exports.deleteProject = async (projectId) => {
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+    });
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    await prisma.project.delete({
+      where: { id: projectId },
+    });
+
+    return { id: projectId };
+  } catch (error) {
+    throw new Error("Error deleting project");
+  }
+};
