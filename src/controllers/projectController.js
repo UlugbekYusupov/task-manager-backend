@@ -34,7 +34,6 @@ exports.getProjectById = async (req, res) => {
 exports.addMember = async (req, res) => {
   try {
     const { userId } = req.body;
-    // const projectId = req.params.projectid;
     const { projectId } = req.params;
 
     const updatedProject = await ProjectService.addMemberToProject(
