@@ -10,15 +10,6 @@ exports.createProject = async (userId, name) => {
   });
 };
 
-// exports.getUserProjects = async (userId) => {
-//   return await prisma.project.findMany({
-//     where: {
-//       members: { some: { id: userId } },
-//     },
-//     include: { owner: true, members: true, tasks: true },
-//   });
-// };
-
 exports.getUserProjects = async (userId) => {
   const ownedProjects = await prisma.project.findMany({
     where: { ownerId: userId },
@@ -69,48 +60,6 @@ exports.addMemberToProject = async (projectId, userId) => {
     },
     include: { members: true },
   });
-};
-
-exports.createTask = async (projectId, title, description) => {
-  const project = await prisma.project.findUnique({
-    where: { id: projectId },
-  });
-  if (!project) throw new Error("Project not found");
-
-  const task = await prisma.task.create({
-    data: {
-      title,
-      description,
-      projectId,
-    },
-  });
-
-  await prisma.project.update({
-    where: { id: projectId },
-    data: {
-      tasks: {
-        connect: { id: task.id },
-      },
-    },
-  });
-
-  return task;
-};
-
-exports.getAllTasksForProject = async (projectId) => {
-  try {
-    const tasks = await prisma.task.findMany({
-      where: {
-        projectId: projectId,
-      },
-      include: {
-        assignedTo: true,
-      },
-    });
-    return tasks;
-  } catch (error) {
-    throw new Error(error.message);
-  }
 };
 
 exports.updateProject = async (projectId, data) => {
