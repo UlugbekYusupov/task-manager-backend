@@ -22,7 +22,7 @@ exports.getProjects = async (req, res) => {
   }
 };
 
-exports.getProject = async (req, res) => {
+exports.getProjectById = async (req, res) => {
   try {
     const project = await ProjectService.getProjectById(req.params.projectId);
     if (!project) return res.status(404).json({ message: "Project not found" });
@@ -34,7 +34,8 @@ exports.getProject = async (req, res) => {
 exports.addMember = async (req, res) => {
   try {
     const { userId } = req.body;
-    const projectId = req.params.id;
+    // const projectId = req.params.projectid;
+    const { projectId } = req.params;
 
     const updatedProject = await ProjectService.addMemberToProject(
       projectId,

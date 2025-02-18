@@ -26,16 +26,44 @@ exports.getProjectById = async (projectId) => {
   });
 };
 
-exports.addMemberToProject = async (projectId, userId) => {
-  const project = await prisma.project.findUnique({ where: { id: projectId } });
-  if (!project) throw new Error("Project not found");
+// exports.addMemberToProject = async (projectId, userId) => {
+//   const project = await prisma.project.findUnique({ where: { id: projectId } });
+//   if (!project) throw new Error("Project not found");
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) throw new Error("User not found");
+//   const user = await prisma.user.findUnique({ where: { id: userId } });
+//   if (!user) throw new Error("User not found");
+
+//   return await prisma.project.update({
+//     where: { id: projectId },
+//     data: { members: { connect: { id: userId } } },
+//   });
+// };
+
+exports.addMemberToProject = async (projectId, userId) => {
+  if (!projectId) {
+    throw new Error("Project ID is required but was undefined");
+  }
+  if (!userId) {
+    throw new Error("User ID is required but was undefined");
+  }
+
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
+  });
+
+  if (!project) {
+    throw new Error("Project not found");
+  }
 
   return await prisma.project.update({
     where: { id: projectId },
-    data: { members: { connect: { id: userId } } },
+    data: {
+      members: {
+        connect: { id: userId },
+      },
+    },
+    include: { members: true },
   });
 };
 

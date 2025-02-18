@@ -2,7 +2,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../utils/prismaClient");
 
-
 exports.register = async (username, email, password) => {
   const [existingUser, existingUsername] = await Promise.all([
     prisma.user.findUnique({ where: { email } }),
@@ -42,8 +41,14 @@ exports.getProfile = async (userId) => {
   }
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, username: true, email: true },
+    select: {
+      projects: true,
+      ownedProjects: true,
+      tasks: { select: { project: true } },
+      invitations: true,
+    },
   });
+
   if (!user) {
     throw new Error("User not found");
   }
@@ -51,6 +56,28 @@ exports.getProfile = async (userId) => {
 };
 
 exports.getAllUsers = async () => {
-  const users = await prisma.user.findMany();
+  const users = await prisma.user.findMany({
+    include: {
+      projects: {
+        select: {
+          tasks: true,
+          members: true,
+        },
+      },
+      ownedProjects: {
+        select: {
+          tasks: true,
+          members: true,
+        },
+      },
+      tasks: {
+        select: {
+          project: true,
+        },
+      },
+      invitations: true,
+    },
+  });
+
   return users;
 };
