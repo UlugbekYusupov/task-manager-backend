@@ -5,17 +5,9 @@ const {
   checkProjectMembership,
 } = require("../middlewares");
 
-// const authMiddleware = require("../middlewares/authMiddleware");
-// const authenticateUser = authMiddleware.authenticateUser;
-
-// const projectOwnershipMiddleware = require("../middlewares/projectOwnershipMiddleware");
-// const checkProjectOwnership = projectOwnershipMiddleware.checkProjectOwnership;
-
-// const projectMembershipMiddleware = require("../middlewares/projectMembershipMiddleware");
-// const checkProjectMembership =
-//   projectMembershipMiddleware.checkProjectMembership;
-
 const projectController = require("../controllers/projectController");
+const taskController = require("../controllers/taskController");
+
 const router = express.Router();
 
 router.post("/", authenticateUser, projectController.createProject);
@@ -47,6 +39,20 @@ router.delete(
   authenticateUser,
   checkProjectOwnership,
   projectController.deleteProject
+);
+
+router.get(
+  "/:projectId/tasks",
+  authenticateUser,
+  checkProjectMembership,
+  taskController.getAllTasksForProject
+);
+
+router.post(
+  "/:projectId/tasks",
+  authenticateUser,
+  checkProjectOwnership,
+  taskController.createTask
 );
 
 module.exports = router;
