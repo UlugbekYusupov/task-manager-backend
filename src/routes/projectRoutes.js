@@ -55,4 +55,11 @@ router.post(
   taskController.createTask
 );
 
+router.put(
+  "/:projectId/tasks/:taskId",
+  authenticateUser,
+  checkProjectMembership,
+  taskController.updateTask
+);
+
 module.exports = router;

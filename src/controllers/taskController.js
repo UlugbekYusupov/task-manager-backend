@@ -9,28 +9,73 @@ exports.getAllTasksForProject = async (req, res) => {
   }
 };
 
+// exports.createTask = async (req, res) => {
+//   try {
+//     const { title, description, assignedTo } = req.body;
+//     const projectId = req.params.projectId;
+//     const ownerId = req.user.id;
+
+//     const task = await TaskService.createTask(
+//       projectId,
+//       title,
+//       description,
+//       assignedTo,
+//       ownerId
+//     );
+//     res.status(201).json({
+//       message: "Task created successfully",
+//       task,
+//     });
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+
+// exports.updateTask = async (req, res) => {
+//   try {
+//     const { projectId, taskId } = req.params;
+//     const userId = req.user.id;
+//     const updates = req.body;
+
+//     const updatedTask = await TaskService.updateTask(taskId, userId, updates);
+//     res.status(200).json(updatedTask);
+//   } catch (error) {
+//     res.status(400).json({ message: error.message });
+//   }
+// };
+
 exports.createTask = async (req, res) => {
   try {
-    const { title, description, assignedTo } = req.body;
+    const { title, description, userId } = req.body;
     const projectId = req.params.projectId;
     const ownerId = req.user.id;
-
-    console.log("🔍 Project ID:", projectId);
-    console.log("🔍 Title:", title);
-    console.log("🔍 Description:", description);
-    console.log("🔍 Assigned To:", assignedTo);
-    console.log("🔍 Owner ID:", ownerId);
 
     const task = await TaskService.createTask(
       projectId,
       title,
       description,
-      assignedTo,
+      userId,
       ownerId
     );
+
     res.status(201).json({
       message: "Task created successfully",
       task,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+exports.updateTask = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const updates = req.body;
+    const updatedTask = await TaskService.updateTask(taskId, updates);
+
+    res.status(200).json({
+      message: "Task updated successfully",
+      updatedTask,
     });
   } catch (error) {
     res.status(400).json({ message: error.message });

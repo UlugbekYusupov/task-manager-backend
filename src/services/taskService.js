@@ -16,33 +16,73 @@ exports.getAllTasksForProject = async (projectId) => {
   }
 };
 
-exports.createTask = async (
-  projectId,
-  title,
-  description,
-  assignedTo,
-  ownerId
-) => {
+exports.createTask = async (projectId, title, description, userId, ownerId) => {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: { members: true },
   });
 
   if (!project) throw new Error("Project not found");
-  if (project.ownerId !== ownerId)
-    throw new Error("Only the project owner can assign tasks");
 
-  const isMember = project.members.some((member) => member.id === assignedTo);
-  if (!isMember) throw new Error("User is not a project member");
+  if (project.ownerId !== ownerId) {
+    throw new Error("Only the project owner can create tasks");
+  }
+
+  if (userId) {
+    const isMember = project.members.some((member) => member.id === userId);
+    if (!isMember) throw new Error("User is not a project member");
+  }
 
   const task = await prisma.task.create({
     data: {
       title,
       description,
-      assignedTo: { connect: { id: assignedTo } }, // ✅ Correctly linking the assigned user
-      project: { connect: { id: projectId } }, // ✅ Correctly linking the task to the project
+      userId: userId || null,
+      projectId,
     },
   });
 
-  return task; // ✅ No need to update the project separately
+  return task;
+};
+
+exports.updateTask = async (taskId, updates) => {
+  const updateData = {};
+
+  if (updates.title) updateData.title = updates.title;
+  if (updates.description) updateData.description = updates.description;
+  if (updates.status) updateData.status = updates.status;
+  if (updates.priority) updateData.priority = updates.priority;
+
+  if (updates.userId !== undefined) {
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
+      include: { project: { include: { members: true } } },
+    });
+
+    if (!task) {
+      throw new Error("Task not found");
+    }
+
+    if (updates.userId !== null) {
+      // Ensure the user is a member before assigning
+      const userExists = task.project.members.some(
+        (member) => member.id === updates.userId
+      );
+
+      if (!userExists) {
+        throw new Error("User is not a project member");
+      }
+
+      updateData.userId = updates.userId; // Assign user
+    } else {
+      updateData.userId = null; // ✅ Unassign user
+    }
+  }
+
+  const updatedTask = await prisma.task.update({
+    where: { id: taskId },
+    data: updateData,
+  });
+
+  return updatedTask;
 };

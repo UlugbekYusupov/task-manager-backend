@@ -13,7 +13,11 @@ exports.createProject = async (userId, name) => {
 exports.getUserProjects = async (userId) => {
   const ownedProjects = await prisma.project.findMany({
     where: { ownerId: userId },
-    include: { owner: true, members: true, tasks: true },
+    include: {
+      owner: true,
+      members: true,
+      tasks: { include: { assignedTo: true } },
+    },
   });
 
   const participatedProjects = await prisma.project.findMany({
@@ -96,6 +100,10 @@ exports.deleteProject = async (projectId) => {
 
     await prisma.project.delete({
       where: { id: projectId },
+      include: {
+        members: true,
+        tasks: true,
+      },
     });
 
     return { id: projectId };
