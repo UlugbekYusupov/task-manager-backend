@@ -1,5 +1,95 @@
 module.exports = {
   paths: {
+    "/api/projects": {
+      post: {
+        summary: "Create a Project",
+        description:
+          "Creates a new project and assigns the authenticated user as the owner.",
+        tags: ["Projects"],
+        security: [{ BearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  name: { type: "string", example: "New Project" },
+                  description: {
+                    type: "string",
+                    example: "This is a sample project",
+                  },
+                },
+                required: ["name"],
+              },
+            },
+          },
+        },
+        responses: {
+          201: {
+            description: "Project created successfully",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "object",
+                  properties: {
+                    id: {
+                      type: "string",
+                      example: "123e4567-e89b-12d3-a456-426614174000",
+                    },
+                    name: { type: "string", example: "New Project" },
+                    description: {
+                      type: "string",
+                      example: "This is a sample project",
+                    },
+                    ownerId: { type: "string", example: "user123" },
+                    createdAt: { type: "string", format: "date-time" },
+                  },
+                },
+              },
+            },
+          },
+          400: { description: "Invalid request data" },
+          401: { description: "Unauthorized" },
+        },
+      },
+      get: {
+        summary: "Get All Projects",
+        description:
+          "Fetches all projects where the authenticated user is a member or an owner.",
+        tags: ["Projects"],
+        security: [{ BearerAuth: [] }],
+        responses: {
+          200: {
+            description: "List of projects retrieved",
+            content: {
+              "application/json": {
+                schema: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: {
+                        type: "string",
+                        example: "123e4567-e89b-12d3-a456-426614174000",
+                      },
+                      name: { type: "string", example: "Project A" },
+                      description: {
+                        type: "string",
+                        example: "A sample project",
+                      },
+                      ownerId: { type: "string", example: "user123" },
+                      createdAt: { type: "string", format: "date-time" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: { description: "Unauthorized" },
+        },
+      },
+    },
     "/api/projects/{projectId}": {
       get: {
         summary: "Get project by ID",

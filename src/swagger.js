@@ -21,6 +21,16 @@ const options = {
         description: "Production Server",
       },
     ],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+      security: [{ BearerAuth: [] }],
+    },
     paths: {
       ...authDocs.paths,
       ...projectDocs.paths,
