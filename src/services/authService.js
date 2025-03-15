@@ -48,7 +48,7 @@ exports.login = async (email, password) => {
     where: { email },
     include: {
       ownedProjects: true,
-      participatedProjects: true,
+      projects: true,
       invitations: true,
     },
   });
