@@ -15,23 +15,15 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const {
-      token,
-      userId,
-      email,
-      username,
-      participatedProjects,
-      ownedProjects,
-      invitations,
-    } = await authService.login(req.body.email, req.body.password);
+    const { token, userId, email, username } = await authService.login(
+      req.body.email,
+      req.body.password
+    );
     res.status(200).json({
       token,
       userId,
       email,
       username,
-      participatedProjects,
-      ownedProjects,
-      invitations,
     });
   } catch (error) {
     res.status(401).json({ message: error.message });
