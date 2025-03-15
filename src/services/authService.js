@@ -29,10 +29,18 @@ exports.login = async (email, password) => {
     throw new Error("Invalid email or password");
   }
   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "2h",
   });
 
-  return { token, userId: user.id };
+  return {
+    token,
+    userId: user.id,
+    email: user.email,
+    username: user.username,
+    participatedProjects: user.projects || [],
+    ownedProjects: user.ownedProjects || [],
+    invitations: user.invitations || [],
+  };
 };
 
 exports.getProfile = async (userId) => {
