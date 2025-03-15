@@ -22,8 +22,36 @@ exports.register = async (username, email, password) => {
   return { message: "User registered successfully", userId: user.id };
 };
 
+// exports.login = async (email, password) => {
+//   const user = await prisma.user.findUnique({ where: { email } });
+
+//   if (!user || !(await bcrypt.compare(password, user.password))) {
+//     throw new Error("Invalid email or password");
+//   }
+//   const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+//     expiresIn: "2h",
+//   });
+
+//   return {
+//     token,
+//     userId: user.id,
+//     email: user.email,
+//     username: user.username,
+//     participatedProjects: user.projects || [],
+//     ownedProjects: user.ownedProjects || [],
+//     invitations: user.invitations || [],
+//   };
+// };
+
 exports.login = async (email, password) => {
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findUnique({
+    where: { email },
+    include: {
+      ownedProjects: true,
+      participatedProjects: true,
+      invitations: true,
+    },
+  });
 
   if (!user || !(await bcrypt.compare(password, user.password))) {
     throw new Error("Invalid email or password");
@@ -37,7 +65,7 @@ exports.login = async (email, password) => {
     userId: user.id,
     email: user.email,
     username: user.username,
-    participatedProjects: user.projects || [],
+    participatedProjects: user.participatedProjects || [],
     ownedProjects: user.ownedProjects || [],
     invitations: user.invitations || [],
   };
