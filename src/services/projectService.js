@@ -1,10 +1,11 @@
 const prisma = require("../utils/prismaClient");
 
-exports.createProject = async (userId, name) => {
+exports.createProject = async (userId, name, description) => {
   return await prisma.project.create({
     data: {
       name,
       ownerId: userId,
+      description: description,
       members: { connect: { id: userId } },
     },
   });

@@ -4,7 +4,8 @@ exports.createProject = async (req, res) => {
   try {
     const project = await ProjectService.createProject(
       req.user.id,
-      req.body.name
+      req.body.name,
+      req.body.description
     );
     res.status(201).json(project);
   } catch (error) {
